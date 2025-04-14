@@ -8,3 +8,6 @@ router.route('/getAllProjects').get(getAllProjects);
 router.route('/getProjectById').get(getProjectById);
 router.route('/updateProject').put(UpdateProject);
 router.route('/deleteProject').delete(DeleteProject);
+
+
+export default router;

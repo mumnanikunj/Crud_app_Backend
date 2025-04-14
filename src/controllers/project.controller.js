@@ -1,4 +1,5 @@
 import { Project } from "../models/project.model.js";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const createProject = async (req, res) => {
@@ -20,6 +21,7 @@ const createProject = async (req, res) => {
       });
     }
     const isValidDate = Date.parse(dateTime);
+    console.log(isValidDate)
     if (isNaN(isValidDate)) {
       return res.status(400).json({
         statusCode: 400,
@@ -38,7 +40,7 @@ const createProject = async (req, res) => {
       .status(201)
       .json(new ApiResponse(201, newProject, "Project created successfully"));
   } catch (error) {
-    throw new ApiError(500, "Something went wrong while creating project");
+    throw new ApiError(500, error);
   }
 };
 
