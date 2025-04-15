@@ -7,7 +7,7 @@ dotenv.config({
     path: "./env"
 });
 
-connectDB().
+await connectDB().
 then((res)=>{
     app.listen(process.env.PORT || 8000, () => {
         console.log(`Server at http://localhost:${process.env.PORT || 8000}` );
