@@ -3,8 +3,9 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const createProject = async (req, res) => {
+  console.log('req====>',req.body)
+  const { title, description, dateTime } = req.body;
   try {
-    const { title, description, dateTime } = req.body;
     if ([title, description, dateTime].some((field) => !field?.trim())) {
       return res.status(400).json({
         statusCode: 400,
@@ -20,9 +21,9 @@ const createProject = async (req, res) => {
         message: "Project with this title already exists",
       });
     }
-    const isValidDate = Date.parse(dateTime);
-    console.log(isValidDate)
-    if (isNaN(isValidDate)) {
+    const isValidDate = dateTime;
+    console.log('Date==>',isValidDate)
+    if (!isValidDate) {
       return res.status(400).json({
         statusCode: 400,
         data: [],
@@ -47,6 +48,9 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
   try {
     const Allprojects = await Project.find();
+    if (!Allprojects || Allprojects.length === 0) {
+      return res.status(404).json(new ApiResponse(404, [], "No projects found"));
+    }
     res.status(200).json(new ApiResponse(200, Allprojects, "GetAll projects"));
   } catch (error) {
     throw new ApiError(500, "Something went wrong while getting projects");
@@ -54,15 +58,28 @@ const getAllProjects = async (req, res) => {
 };
 
 const getProjectById = async (req, res) => {
+  const { id } = req.body;
+  console.log('id===>',id)
   try {
-    const ProjectById = await Project.findById(req.params.id);
-    if (!ProjectById) {
-      return res
-        .status(400)
-        .json(new ApiResponse(400, [], "Project not foundby ID"));
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({
+        statusCode: 404,
+        data: [],
+        message: "Project not found",
+      });
     }
+    res.status(200).json({
+      statusCode: 200,
+      data: project,
+      message: "Project fetched successfully",
+    });
   } catch (error) {
-    throw new ApiError(500, "Something went wrong while getting project by id");
+    res.status(500).json({
+      statusCode: 500,
+      data: [],
+      message: error.message,
+    });
   }
 };
 
@@ -80,8 +97,8 @@ const UpdateProject = async (req, res) => {
           )
         );
     }
-    const isValidDate = Date.parse(dateTime);
-    if (isNaN(isValidDate)) {
+    const isValidDate = dateTime;
+    if (!isValidDate) {
       return res
         .status(400)
         .json(new ApiResponse(400, [], "Invalid date and time format"));
