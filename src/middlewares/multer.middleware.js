@@ -2,10 +2,9 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-// Define temp folder path
 const tempDir = path.join('public', 'temp');
 
-// Check if it exists; if not, create it
+
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
